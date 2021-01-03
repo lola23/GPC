@@ -72,7 +72,19 @@ const solar_system = ({ context }) => {
      * MESH
      */
     const scene = new THREE.Scene();
-    scene.background = starsTexture;
+    /*
+     * SKYBOX
+     */
+    const loaderCube = new THREE.CubeTextureLoader();
+    const texture = loaderCube.load([
+        'assets/skybox/three/front.png',
+        'assets/skybox/three/back.png',
+        'assets/skybox/three/top.png',
+        'assets/skybox/three/bottom.png',
+        'assets/skybox/three/left.png',
+        'assets/skybox/three/right.png',
+    ]);
+    scene.background = texture;
     const geometry = new THREE.SphereGeometry(1, 32, 16);
 
     const sunMesh = new THREE.Mesh(geometry, sunMaterial);
