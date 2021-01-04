@@ -24,6 +24,10 @@ function toRad(degrees) {
 }
 
 const solar_system = ({ context }) => {
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    var rotate = true;
+
     // RENDERER
     const renderer = new THREE.WebGLRenderer({
         canvas: context.canvas,
@@ -33,6 +37,28 @@ const solar_system = ({ context }) => {
     // CAMERA
     const camera = new THREE.PerspectiveCamera(100, SCREEN_WIDTH / SCREEN_HEIGHT, 1, 1000);
     camera.position.set(30, 5, 35);
+
+    renderer.domElement.addEventListener('click', function(event){
+        mouse.x = ( event.clientX / SCREEN_WIDTH ) * 2 - 1;
+        mouse.y = - ( event.clientY / SCREEN_HEIGHT ) * 2 + 1;
+        // update the picking ray with the camera and mouse position
+        raycaster.setFromCamera( mouse, camera );
+
+        // calculate objects intersecting the picking ray
+        const intersects = raycaster.intersectObjects( scene.children );
+
+        for ( let i = 0; i < intersects.length; i ++ ) {
+            if (intersects[i].object.name == "SUN") {
+                intersects[i].object.callback();
+                rotate = true;
+            } else {
+                rotate = false
+            }
+            console.log(rotate);
+        }
+
+        renderer.render( scene, camera );
+    }, false);
 
     // ORBIT CONTROLS
     const controls = new THREE.OrbitControls(camera, context.canvas);
@@ -72,6 +98,7 @@ const solar_system = ({ context }) => {
      * MESH
      */
     const scene = new THREE.Scene();
+
     /*
      * SKYBOX
      */
@@ -90,6 +117,8 @@ const solar_system = ({ context }) => {
     const sunMesh = new THREE.Mesh(geometry, sunMaterial);
     sunMesh.position.set(0, 0, 0);
     sunMesh.scale.setScalar(10);
+    sunMesh.name = "SUN"
+    sunMesh.callback = function() { console.log("Sun pressed.") };
     scene.add(sunMesh);
 
     const mercuryOrbitMaterial = new THREE.LineBasicMaterial( { color : 0xf2d8d4 } );
@@ -161,47 +190,47 @@ const solar_system = ({ context }) => {
     return {
 
         render({ time }) {
-
-            const ORP = time / 10;      // Earth's orbital rotation period
-            const ARP = ORP * 365;      // Rotation around axis
-
             // sunMesh.rotation.y = time;
+            if (rotate) {
+                const ORP = time / 10;      // Earth's orbital rotation period
+                const ARP = ORP * 365;      // Rotation around axis
 
-            mercuryGroup.rotation.y = ORP * 1.59;   // rotate around the sun
-            mercuryGroup.rotation.x = toRad(7.01);
-            mercuryMesh.rotation.y = ARP * 58.65;   // rotate planet
-
-            venusGroup.rotation.y = ORP * 1.18;
-            venusGroup.rotation.x = toRad(3.39);
-            venusMesh.rotation.y = ARP * -243.02;
-
-            earthGroup.rotation.y = ORP;
-            earthGroup.rotation.x = toRad(0);
-            earthMesh.rotation.y = ARP;
-
-            marsGroup.rotation.y = ORP * 0.8;
-            marsGroup.rotation.x = toRad(1.85);
-            marsMesh.rotation.y = ARP * 1.03;
-
-            jupiterGroup.rotation.y = ORP * 0.43;
-            jupiterGroup.rotation.x = toRad(1.31);
-            jupiterMesh.rotation.y = ARP * 0.41;
-
-            saturnGroup.rotation.y = ORP * 0.325;
-            saturnGroup.rotation.x = toRad(2.49);
-            saturnMesh.rotation.y = ARP * 0.45;
-
-            uranusGroup.rotation.y = ORP * 0.22;
-            uranusGroup.rotation.x = toRad(0.77);
-            uranusMesh.rotation.y = ARP * -0.72;
-
-            neptuneGroup.rotation.y = ORP * 0.18;
-            neptuneGroup.rotation.x = toRad(1.77);
-            neptuneMesh.rotation.y = ARP * 0.67;
-
-            plutoGroup.rotation.y = ORP * 0.15;
-            plutoGroup.rotation.x = toRad(17.14);
-            plutoMesh.rotation.y = ARP * 6.41;
+                mercuryGroup.rotation.y = ORP * 1.59;   // rotate around the sun
+                mercuryGroup.rotation.x = toRad(7.01);
+                mercuryMesh.rotation.y = ARP * 58.65;   // rotate planet
+    
+                venusGroup.rotation.y = ORP * 1.18;
+                venusGroup.rotation.x = toRad(3.39);
+                venusMesh.rotation.y = ARP * -243.02;
+    
+                earthGroup.rotation.y = ORP;
+                earthGroup.rotation.x = toRad(0);
+                earthMesh.rotation.y = ARP;
+    
+                marsGroup.rotation.y = ORP * 0.8;
+                marsGroup.rotation.x = toRad(1.85);
+                marsMesh.rotation.y = ARP * 1.03;
+    
+                jupiterGroup.rotation.y = ORP * 0.43;
+                jupiterGroup.rotation.x = toRad(1.31);
+                jupiterMesh.rotation.y = ARP * 0.41;
+    
+                saturnGroup.rotation.y = ORP * 0.325;
+                saturnGroup.rotation.x = toRad(2.49);
+                saturnMesh.rotation.y = ARP * 0.45;
+    
+                uranusGroup.rotation.y = ORP * 0.22;
+                uranusGroup.rotation.x = toRad(0.77);
+                uranusMesh.rotation.y = ARP * -0.72;
+    
+                neptuneGroup.rotation.y = ORP * 0.18;
+                neptuneGroup.rotation.x = toRad(1.77);
+                neptuneMesh.rotation.y = ARP * 0.67;
+    
+                plutoGroup.rotation.y = ORP * 0.15;
+                plutoGroup.rotation.x = toRad(17.14);
+                plutoMesh.rotation.y = ARP * 6.41;
+            }
 
             controls.update();
             renderer.render(scene, camera);
