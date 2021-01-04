@@ -72,7 +72,19 @@ const solar_system = ({ context }) => {
      * MESH
      */
     const scene = new THREE.Scene();
-    scene.background = starsTexture;
+    /*
+     * SKYBOX
+     */
+    const loaderCube = new THREE.CubeTextureLoader();
+    const texture = loaderCube.load([
+        'assets/skybox/four/front.png',
+        'assets/skybox/four/back.png',
+        'assets/skybox/four/top.png',
+        'assets/skybox/four/bottom.png',
+        'assets/skybox/four/left.png',
+        'assets/skybox/four/right.png',
+    ]);
+    scene.background = texture;
     const geometry = new THREE.SphereGeometry(1, 32, 16);
 
     const sunMesh = new THREE.Mesh(geometry, sunMaterial);
@@ -156,30 +168,39 @@ const solar_system = ({ context }) => {
             // sunMesh.rotation.y = time;
 
             mercuryGroup.rotation.y = ORP * 1.59;   // rotate around the sun
+            mercuryGroup.rotation.x = toRad(7.01);
             mercuryMesh.rotation.y = ARP * 58.65;   // rotate planet
 
             venusGroup.rotation.y = ORP * 1.18;
+            venusGroup.rotation.x = toRad(3.39);
             venusMesh.rotation.y = ARP * -243.02;
 
             earthGroup.rotation.y = ORP;
+            earthGroup.rotation.x = toRad(0);
             earthMesh.rotation.y = ARP;
 
             marsGroup.rotation.y = ORP * 0.8;
+            marsGroup.rotation.x = toRad(1.85);
             marsMesh.rotation.y = ARP * 1.03;
 
             jupiterGroup.rotation.y = ORP * 0.43;
+            jupiterGroup.rotation.x = toRad(1.31);
             jupiterMesh.rotation.y = ARP * 0.41;
 
             saturnGroup.rotation.y = ORP * 0.325;
+            saturnGroup.rotation.x = toRad(2.49);
             saturnMesh.rotation.y = ARP * 0.45;
 
             uranusGroup.rotation.y = ORP * 0.22;
+            uranusGroup.rotation.x = toRad(0.77);
             uranusMesh.rotation.y = ARP * -0.72;
 
             neptuneGroup.rotation.y = ORP * 0.18;
+            neptuneGroup.rotation.x = toRad(1.77);
             neptuneMesh.rotation.y = ARP * 0.67;
 
             plutoGroup.rotation.y = ORP * 0.15;
+            plutoGroup.rotation.x = toRad(17.14);
             plutoMesh.rotation.y = ARP * 6.41;
 
             controls.update();
